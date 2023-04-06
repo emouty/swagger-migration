@@ -2,7 +2,7 @@
 
 FILES_PATTERN=${1:-*.java}
 
-FILES=`find . -name "$FILES_PATTERN"`
+FILES=$(find . -name "$FILES_PATTERN")
 
 echo ''
 echo "Migrating Swagger v2 to Swagger v3 OpenAPI annotations"
@@ -11,30 +11,29 @@ echo ''
 EXPRESSION="s/import io\.swagger\.annotations\.Api;/import io\.swagger\.v3\.oas\.annotations\.OpenAPIDefinition;\nimport io\.swagger\.v3\.oas\.annotations\.tags.Tag;/g;\
 s/io\.swagger\.annotations\.ApiOperation;/io\.swagger\.v3\.oas\.annotations\.Operation;/g;\
 s/io\.swagger\.annotations\.ApiParam;/io\.swagger\.v3\.oas\.annotations\.Parameter;/g;\
-s/io\.swagger\.annotations\.ApiResponse;/io\.swagger\.v3\.oas\.annotations\.responses\.ApiResponse;/g;\
+s/import io\.swagger\.annotations\.ApiResponse;/import io\.swagger\.v3\.oas\.annotations\.media\.Content;\nimport io\.swagger\.v3\.oas\.annotations\.media\.Schema;\nimport io\.swagger\.v3\.oas\.annotations\.responses\.ApiResponse;/g;\
 s/io\.swagger\.annotations\.ApiResponses;/io\.swagger\.v3\.oas\.annotations\.responses\.ApiResponses;/g;\
 s/io\.swagger\.annotations\.ApiModelProperty;/io\.swagger\.v3\.oas\.annotations\.media.Schema;/g;\
 s/io\.swagger\.annotations\.ApiModelProperty;/io\.swagger\.v3\.oas\.annotations\.media\.Schema;/g;\
-\
 s/@Api$/@OpenAPIDefinition/g;\
-s/@Api(value = \"\([^)]*\)\"/@Tag(name = \"\1\"/g;\
+s/@Api(\s*value = \"\([^)]*\)\"/@Tag(name = \"\1\"/g;\
 s/@Api(\"\([^)]*\)\"/@Tag(name = \"\1\"/g;\
-s/@ApiOperation(value = \"\([^,]*\)\",/@Operation(summary = \"\1\",/g;\
-s/@ApiOperation(value = /@Operation(summary = /g;\
-s/@ApiOperation(/@Operation(summary = /g;\
-s/@ApiResponse(code = \([0-9]\{3\}\), message = \"\(.*\)\", response = \(.*\.class)\)/@ApiResponse(responseCode = \"\1\", description = \"\2\", content = @Content(schema = @Schema(implementation = \3))/g;\
-s/@ApiResponse(code = \([0-9]\{3\}\), message = \"\([^)]*\)\")/@ApiResponse(responseCode = \"\1\", description = \"\2\")/g;\
-s/@ApiParam(required = \(.*\), value = \"\([^)]*\)\")/@Parameter(required = \1, description = \"\2\")/g;\
-s/@ApiParam(value = \"\(.*\)\", required = \([^)]*\))/@Parameter(required = \2, description = \"\1\")/g;\
-s/@ApiParam(\"\([^)]*\)\")/@Parameter(description = \"\1\")/g;\
-s/@ApiModelProperty(\"/@Schema(description = \"/g;\
-s/@ApiModelProperty(notes/@Schema(description/g;\
-s/@ApiModelProperty(value/@Schema(description/g;\
+s/@ApiOperation(\s*value = \"\([^,]*\)\",/@Operation(summary = \"\1\",/g;\
+s/@ApiOperation(\s*value = /@Operation(summary = /g;\
+s/@ApiOperation(\s*/@Operation(summary = /g;\
+s/\(\n\{1\}\s*\)@ApiResponse(code = \([0-9]\{3\}\),\n*\s*message = \"\([^\"]*\)\",\n*\s*response = \([a-Z]*\.class)\)/\1@ApiResponse(responseCode = \"\2\", description = \"\3\", content = @Content(schema = @Schema(implementation = \4))/g;\
+s/@ApiResponse(code = \([0-9]\{3\}\),\r*\n*\s*message = \"\([^)]*\)\")/@ApiResponse(responseCode = \"\1\", description = \"\2\")/g;\
+s/@ApiParam(\n*\s*required = \(.*\), value = \"\([^)]*\)\")/@Parameter(required = \1, description = \"\2\")/g;\
+s/@ApiParam(\n*\s*value = \"\(.*\)\", required = \([^)]*\))/@Parameter(required = \2, description = \"\1\")/g;\
+s/@ApiParam(\n*\s*\"\([^)]*\)\")/@Parameter(description = \"\1\")/g;\
+s/@ApiModelProperty(\n*\s*\"/@Schema(description = \"/g;\
+s/@ApiModelProperty(\n*\s*notes/@Schema(description/g;\
+s/@ApiModelProperty(\n*\s*value/@Schema(description/g;\
 "
 
-for FILE in $FILES
-do
-    CMD="sed -i -e '${EXPRESSION}' '${FILE}'"
+for FILE in $FILES; do
+    CMD="sed -z -i -e '${EXPRESSION}' '${FILE}'"
+
     echo ''
     echo "Migrating ${FILE} ..."
     eval ${CMD}
