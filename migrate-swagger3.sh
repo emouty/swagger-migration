@@ -29,6 +29,8 @@ s/@ApiParam(\n*\s*\"\([^)]*\)\")/@Parameter(description = \"\1\")/g;\
 s/@ApiModelProperty(\n*\s*\"/@Schema(description = \"/g;\
 s/@ApiModelProperty(\n*\s*notes/@Schema(description/g;\
 s/@ApiModelProperty(\n*\s*value/@Schema(description/g;\
+s/@ApiResponses({\([^}]*\)})/\1/g;\
+s/@ApiResponse(\([^)]*\)\([^\"])*\),\n/@ApiResponse(\1\2\n/g;\
 "
 
 for FILE in $FILES; do
