@@ -23,9 +23,10 @@ s/@ApiOperation(\s*value = /@Operation(summary = /g;\
 s/@ApiOperation(\s*/@Operation(summary = /g;\
 s/\(\n\{1\}\s*\)@ApiResponse(code = \([0-9]\{3\}\),\n*\s*message = \"\([^\"]*\)\",\n*\s*response = \([a-Z]*\.class)\)/\1@ApiResponse(responseCode = \"\2\", description = \"\3\", content = @Content(schema = @Schema(implementation = \4))/g;\
 s/@ApiResponse(code = \([0-9]\{3\}\),\r*\n*\s*message = \"\([^)]*\)\")/@ApiResponse(responseCode = \"\1\", description = \"\2\")/g;\
-s/@ApiParam(\n*\s*required = \(.*\), value = \"\([^)]*\)\")/@Parameter(required = \1, description = \"\2\")/g;\
-s/@ApiParam(\n*\s*value = \"\(.*\)\", required = \([^)]*\))/@Parameter(required = \2, description = \"\1\")/g;\
+s/@ApiParam(\n*\s*required = \([^,]\), value = \"\([^)]*\)\")/@Parameter(required = \1, description = \"\2\")/g;\
+s/@ApiParam(\n*\s*value = \"\([^\"]*\)\", required = \([^)]*\))/@Parameter(required = \2, description = \"\1\")/g;\
 s/@ApiParam(\n*\s*\"\([^)]*\)\")/@Parameter(description = \"\1\")/g;\
+s/@ApiParam(\n*\s*value = \"\([^)]*\)\")/@Parameter(description = \"\1\")/g;\
 s/@ApiModelProperty(\n*\s*\"/@Schema(description = \"/g;\
 s/@ApiModelProperty(\n*\s*notes/@Schema(description/g;\
 s/@ApiModelProperty(\n*\s*value/@Schema(description/g;\
