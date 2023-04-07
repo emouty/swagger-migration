@@ -3,18 +3,20 @@
 ## How to use
 
 1. Download the `migrate-swagger` script to the root of your project
-1. The script will only scan for `*.java` files in your project
-1. Once script completes double check by building the application and running it
+2. The script will only scan for `*.java` files in your project
+3. Once script completes double check by building the application and running it
 
-> Possible breaks maybe if you have a string that is concatenated by `+` for any of the values that it is trying to migrate
+> Possible breaks maybe if you have a string that is concatenated by `+` for any of the values that it is trying to
+> migrate
 
 Example:
 
 ```java
 @ApiResponse(code = 200, message = "hello" +
-	"world")
+        "world")
 
 ```
+
 At the moment I don't have a pattern to recognize that but may add it later.
 
 ## What you should expect
